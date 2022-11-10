@@ -24,6 +24,7 @@ TIMES_WAIT: List[float] = [
     0.78,
 ]
 
+executor = ProcessPoolExecutor()
 
 async def send_request(id_request: uuid.UUID, time_wait: float) -> str:
     """ Эмуляция отправки запроса на сервер """
@@ -86,10 +87,9 @@ async def process_request(time_wait: float):
     responce: str = await send_request(id_request, time_wait)
     count_word: int = await parse_response(id_request, responce, time_wait)
 
-    executor = ProcessPoolExecutor()
     loop = asyncio.get_event_loop()
     path_to_file: str = await loop.run_in_executor(executor, generate_file, id_request, count_word)
-    await loop.run_in_executor(executor, output_responce, id_request, path_to_file)
+    output_responce(id_request, path_to_file)
 
 
 async def main():
